@@ -1,0 +1,42 @@
+version: "3"
+services:
+  db:
+    image: postgres:14
+    volumes:
+      - postgres-data:/var/lib/postgresql/data:delegeted
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: thxness_user
+      POSTGRES_PASSWORD: thxness_password
+  rails:
+    env_file: .env.development
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: thxness_rails
+    command: dockerize -wait tcp://db:5432 -timeout 60s -wait-retry-interval 3s bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/app:cached
+      - node_modules_cache:/app/node_modules
+      - bundle_cache:/bundle
+      - tmp-data:/app/tmp
+      - log-data:/app/log
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      SECRET_KEY_BASE: development
+      TZ: Asia/Tokyo
+      INSTANCE_TYPE: Docker
+    stdin_open: true
+    tty: true
+    entrypoint: /app/docker-entrypoint.sh
+volumes:
+  tmp-data:
+  log-data:
+  postgres-data:
+  node_modules_cache:
+  bundle_cache:
