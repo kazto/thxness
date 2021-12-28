@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_28_023409) do
+ActiveRecord::Schema.define(version: 2021_12_28_041559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "admin_apps", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "admin_workspaces", force: :cascade do |t|
+    t.bigint "workspace_id"
+    t.string "account"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["workspace_id"], name: "index_admin_workspaces_on_workspace_id"
+  end
 
   create_table "receivers", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
@@ -36,10 +49,10 @@ ActiveRecord::Schema.define(version: 2021_12_28_023409) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "slack_user_id"
-    t.string "slack_user_name"
-    t.bigint "total_send_points"
-    t.bigint "total_receive_points"
+    t.string "slack_user_id", comment: "SlackユーザID（プロフィール、メンバーIDをコピー、から取得できる）"
+    t.string "slack_user_name", comment: "Slackユーザ名（プロフィール、氏名。メンション時に表示されるもの）"
+    t.bigint "total_send_points", comment: "総感謝した数"
+    t.bigint "total_receive_points", comment: "総感謝された数"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "workspace_id"
@@ -47,7 +60,7 @@ ActiveRecord::Schema.define(version: 2021_12_28_023409) do
   end
 
   create_table "workspaces", force: :cascade do |t|
-    t.string "name"
+    t.string "name", comment: "Slackワークスペース名"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
