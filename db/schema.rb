@@ -10,9 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2021_12_28_023409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "receivers", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "workspace_id"
+    t.bigint "thank_id"
+    t.bigint "receiver_user_id"
+    t.index ["receiver_user_id"], name: "index_receivers_on_receiver_user_id"
+    t.index ["thank_id"], name: "index_receivers_on_thank_id"
+    t.index ["workspace_id"], name: "index_receivers_on_workspace_id"
+  end
+
+  create_table "thanks", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "workspace_id"
+    t.bigint "sender_user_id"
+    t.index ["sender_user_id"], name: "index_thanks_on_sender_user_id"
+    t.index ["workspace_id"], name: "index_thanks_on_workspace_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "slack_user_id"
+    t.string "slack_user_name"
+    t.bigint "total_send_points"
+    t.bigint "total_receive_points"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "workspace_id"
+    t.index ["workspace_id"], name: "index_users_on_workspace_id"
+  end
+
+  create_table "workspaces", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  add_foreign_key "receivers", "users", column: "receiver_user_id"
+  add_foreign_key "thanks", "users", column: "sender_user_id"
 end
